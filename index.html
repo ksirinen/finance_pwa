@@ -683,9 +683,6 @@
 </nav>
 
   <script src="app.js"></script>
-
-
-
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
@@ -697,10 +694,10 @@ if ("serviceWorker" in navigator) {
           await reg.unregister();
         }
       }
-      await navigator.serviceWorker.register("./sw.js", { scope: "./" });
+      await navigator.serviceWorker.register("./sw.js?v=10", { scope: "./" });
       console.log("sw registered");
     } catch (e) {
-      console.error("sw register failed", e);
+      console.error(e);
     }
   });
 }
