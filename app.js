@@ -30,17 +30,6 @@
   const openTransferBtn = document.getElementById("open-transfer-btn");
   const exportBtn = document.getElementById("export-btn");
 
-  const goalNameInput = document.getElementById("goal-name-input");
-  const goalTargetInput = document.getElementById("goal-target-input");
-  const saveGoalBtn = document.getElementById("save-goal-btn");
-
-  const goalNameView = document.getElementById("goal-name-view");
-  const goalTargetView = document.getElementById("goal-target-view");
-  const goalCurrentView = document.getElementById("goal-current-view");
-  const goalLeftView = document.getElementById("goal-left-view");
-  const goalProgressBar = document.getElementById("goal-progress-bar");
-  const goalProgressText = document.getElementById("goal-progress-text");
-
   const kaspiBalance = document.getElementById("kaspi-balance");
   const freedomBalance = document.getElementById("freedom-balance");
   const cryptoBalance = document.getElementById("crypto-balance");
@@ -91,10 +80,6 @@
 
   const state = {
     operations: [],
-    goal: {
-      name: "",
-      target: 0
-    },
     currentScreen: "home",
     editingOperationId: null
   };
@@ -207,10 +192,6 @@
       if (!raw) return;
       const parsed = JSON.parse(raw);
       if (parsed && Array.isArray(parsed.operations)) state.operations = parsed.operations;
-      if (parsed && parsed.goal) {
-        state.goal.name = parsed.goal.name || "";
-        state.goal.target = Number(parsed.goal.target || 0);
-      }
       if (parsed && parsed.currentScreen) state.currentScreen = parsed.currentScreen;
     } catch (_) {}
   }
@@ -372,23 +353,6 @@
     });
   }
 
-  function renderGoal(allAssetsValue) {
-    goalNameInput.value = state.goal.name || "";
-    goalTargetInput.value = state.goal.target ? String(state.goal.target) : "";
-
-    const target = Number(state.goal.target || 0);
-    const current = Number(allAssetsValue || 0);
-    const left = Math.max(target - current, 0);
-    const percent = target > 0 ? Math.min((current / target) * 100, 100) : 0;
-
-    goalNameView.textContent = state.goal.name || "—";
-    goalTargetView.textContent = formatNumber(target);
-    goalCurrentView.textContent = formatNumber(current);
-    goalLeftView.textContent = formatNumber(left);
-    goalProgressBar.style.width = `${percent}%`;
-    goalProgressText.textContent = `Прогресс: ${percent.toFixed(1)}%`;
-  }
-
   function operationTitle(op) {
     if (op.type === "adjustment") return "Корректировка";
     if (op.transferId) return op.type === "expense" ? "Перевод исходящий" : "Перевод входящий";
@@ -506,7 +470,6 @@
     analyticsMonthIncome.textContent = formatNumber(monthIncomeTotal);
 
     renderLastOperation();
-    renderGoal(allAssetsValue);
     renderDonut();
     renderAssetsBlock();
     renderRecent();
@@ -589,13 +552,6 @@
     saveData();
     render();
     closeTransferModal();
-  }
-
-  function saveGoal() {
-    state.goal.name = (goalNameInput.value || "").trim();
-    state.goal.target = Number(goalTargetInput.value || 0);
-    saveData();
-    render();
   }
 
   function adjustAccount(account) {
@@ -711,7 +667,6 @@
   addOperationBtn.addEventListener("click", addOperation);
   openTransferBtn.addEventListener("click", openTransferModal);
   exportBtn.addEventListener("click", exportData);
-  saveGoalBtn.addEventListener("click", saveGoal);
 
   saveEditBtn.addEventListener("click", saveEditedOperation);
   deleteEditBtn.addEventListener("click", () => {
