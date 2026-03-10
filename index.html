@@ -1,13 +1,14 @@
 <!doctype html>
 <html lang="ru">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#081225" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="fin" />
-  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon-v2.png" />
   <title>fin</title>
   <style>
@@ -315,6 +316,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="theme-color" content="#ffffff">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon-v2.png">
 </head>
 <body>
   <div id="lock-screen" class="wrap">
@@ -682,25 +684,39 @@
     <button class="nav-btn" data-screen="analytics">Аналитика</button>
 </nav>
 
-  <script src="app.js"></script>
+  
+
 <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
+(function () {
+  if (!("serviceWorker" in navigator)) return;
+
+  window.addEventListener("load", async function () {
     try {
       const regs = await navigator.serviceWorker.getRegistrations();
       for (const reg of regs) {
-        const url = reg.active?.scriptURL || reg.installing?.scriptURL || reg.waiting?.scriptURL || "";
+        const url =
+          (reg.active && reg.active.scriptURL) ||
+          (reg.installing && reg.installing.scriptURL) ||
+          (reg.waiting && reg.waiting.scriptURL) || "";
         if (url.includes("service-worker.js")) {
           await reg.unregister();
         }
       }
-      await navigator.serviceWorker.register("./sw.js?v=10", { scope: "./" });
-      console.log("sw registered");
+
+      await navigator.serviceWorker.register("./sw.js?v=20", { scope: "./" });
+
+      window.addEventListener("error", function (e) {
+        console.error("runtime error:", e.message);
+      });
+
+      window.addEventListener("unhandledrejection", function (e) {
+        console.error("promise rejection:", e.reason);
+      });
     } catch (e) {
-      console.error(e);
+      console.error("sw register failed", e);
     }
   });
-}
+})();
 </script>
 </body>
 </html>

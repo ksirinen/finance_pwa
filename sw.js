@@ -1,11 +1,11 @@
-const CACHE_NAME = "fin-cache-v11";
-
+const CACHE_NAME = "fin-cache-v20";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
+  "./icons/apple-touch-icon-v2.png",
   "./icons/icon-180.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png"
@@ -19,48 +19,39 @@ self.addEventListener("install", event => {
 });
 
 self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      )
-    )
-  );
-  self.clients.claim();
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)));
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
 
   const url = new URL(event.request.url);
+  if (url.origin !== self.location.origin) return;
 
-  // Только same-origin
-  if (url.origin !== location.origin) return;
+  event.respondWith((async () => {
+    const cached = await caches.match(event.request, { ignoreSearch: true });
+    if (cached) return cached;
 
-  event.respondWith(
-    caches.match(event.request).then(cached => {
-      if (cached) return cached;
-
-      return fetch(event.request)
-        .then(response => {
-          if (!response || response.status !== 200 || response.type === "opaque") {
-            return response;
-          }
-
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-          return response;
-        })
-        .catch(() => {
-          if (
-            event.request.mode === "navigate" ||
-            event.request.destination === "document"
-          ) {
-            return caches.match("./index.html");
-          }
-        });
-    })
-  );
+    try {
+      const response = await fetch(event.request);
+      if (response && response.status === 200 && response.type !== "opaque") {
+        const copy = response.clone();
+        const cache = await caches.open(CACHE_NAME);
+        cache.put(event.request, copy);
+      }
+      return response;
+    } catch (err) {
+      if (
+        event.request.mode === "navigate" ||
+        event.request.destination === "document"
+      ) {
+        return caches.match("./index.html", { ignoreSearch: true });
+      }
+      throw err;
+    }
+  })());
 });
