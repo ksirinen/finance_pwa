@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#081225" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="fin" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/icon-180.png" />
+  <title>fin</title>
+  <style>
+    :root{
+      --bg1:#081225;
+      --bg2:#0f172a;
+      --card:#0b1630;
+      --field:#1e293b;
+      --text:#f3f4f6;
+      --muted:#9ca3af;
+      --green:#22c55e;
+      --border:rgba(255,255,255,.08);
+      --red:#ef4444;
+      --blue:#38bdf8;
+      --yellow:#f59e0b;
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;
+      min-height:100%;
+      background:linear-gradient(180deg,var(--bg1),var(--bg2));
+      color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    }
+    body{padding-bottom:90px}
+    .wrap{
+      max-width:1150px;
+      margin:0 auto;
+      padding:20px 20px 100px;
+    }
+    .card{
+      background:rgba(11,22,48,.92);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:20px;
+      box-shadow:0 16px 36px rgba(0,0,0,.28);
+    }
+    .auth{
+      max-width:420px;
+      margin:48px auto;
+    }
+    h1,h2,h3,p{margin:0 0 12px}
+    .muted{color:var(--muted)}
+    .hidden{display:none !important}
+    input,select,button,textarea{
+      width:100%;
+      border:none;
+      border-radius:16px;
+      padding:14px;
+      font-size:16px;
+      margin-top:10px;
+      background:var(--field);
+      color:var(--text);
+    }
+    textarea{resize:vertical;min-height:100px}
+    button{
+      background:var(--green);
+      color:#08110b;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .secondary{
+      background:var(--field);
+      color:var(--text);
+    }
+    .danger{
+      background:var(--red);
+      color:white;
+    }
+    .blue{
+      background:var(--blue);
+      color:#041018;
+    }
+    .yellow{
+      background:var(--yellow);
+      color:#201300;
+    }
+    .msg{
+      min-height:22px;
+      margin-top:12px;
+      color:#fca5a5;
+      font-size:14px;
+    }
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom:18px;
+    }
+    .topbar-actions{
+      display:flex;
+      gap:10px;
+    }
+    .screen{display:none}
+    .screen.active{display:block}
+    .accounts-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+      margin-bottom:16px;
+    }
+    .summary{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:14px;
+      margin-bottom:16px;
+    }
+    .summary-3{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+      margin-bottom:16px;
+    }
+    .summary-2{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:14px;
+      margin-bottom:16px;
+    }
+    .box{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+    }
+    .label{
+      color:var(--muted);
+      font-size:14px;
+      margin-bottom:8px;
+    }
+    .value{
+      font-size:28px;
+      font-weight:700;
+    }
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+      flex-wrap:wrap;
+    }
+    .history{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    .item{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:12px;
+    }
+    .item .date{
+      color:var(--muted);
+      font-size:13px;
+      margin-bottom:6px;
+    }
+    .recent-actions{
+      display:flex;
+      gap:8px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .small-btn{
+      width:auto;
+      min-width:120px;
+      margin-top:0;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:14px;
+    }
+    .goal-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:10px;
+    }
+    .progress{
+      width:100%;
+      height:16px;
+      background:rgba(255,255,255,.08);
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:12px;
+    }
+    .progress-bar{
+      height:100%;
+      width:0%;
+      background:var(--green);
+      border-radius:999px;
+    }
+    .chart-wrap{
+      display:flex;
+      justify-content:center;
+      margin-top:8px;
+    }
+    .donut{
+      width:240px;
+      height:240px;
+    }
+    .donut-bg{
+      fill:none;
+      stroke:rgba(255,255,255,.08);
+      stroke-width:28;
+    }
+    .donut-hole{
+      fill:#0b1630;
+    }
+    .seg{
+      fill:none;
+      stroke-width:28;
+      transform:rotate(-90deg);
+      transform-origin:110px 110px;
+    }
+    .center-small{
+      fill:#9ca3af;
+      font-size:12px;
+    }
+    .center-big{
+      fill:#f3f4f6;
+      font-size:14px;
+      font-weight:700;
+    }
+    .legend{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+    .legend-row{
+      display:grid;
+      grid-template-columns:16px 1fr auto;
+      gap:10px;
+      align-items:center;
+      font-size:14px;
+    }
+    .dot{
+      width:16px;
+      height:16px;
+      border-radius:999px;
+    }
+    .bottom-nav{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      padding:12px;
+      background:rgba(8,18,37,.96);
+      backdrop-filter:blur(12px);
+      border-top:1px solid rgba(255,255,255,.08);
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:10px;
+      z-index:1000;
+    }
+    .nav-btn{
+      margin:0;
+      background:#13203b;
+      color:#dbe4f0;
+      padding:12px 8px;
+      font-size:14px;
+      border-radius:14px;
+    }
+    .nav-btn.active{
+      background:var(--green);
+      color:#08110b;
+    }
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.6);
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      padding:16px;
+      z-index:2000;
+    }
+    .modal-card{
+      width:min(720px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:rgba(11,22,48,.98);
+      border:1px solid var(--border);
+      border-radius:24px;
+      padding:20px;
+      box-shadow:0 16px 36px rgba(0,0,0,.35);
+    }
+    @media (max-width: 980px){
+      .accounts-grid,.summary,.summary-3,.summary-2,.form-grid,.goal-grid{
+        grid-template-columns:1fr;
+      }
+      .topbar{
+        flex-direction:column;
+        align-items:stretch;
+      }
+      .topbar-actions{
+        width:100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="lock-screen" class="wrap">
+    <div class="card auth">
+      <h1>fin</h1>
+      <p class="muted">Личное офлайн-приложение</p>
+
+      <div id="setup-block" class="hidden">
+        <h3>Создай PIN</h3>
+        <input id="setup-pin" type="password" inputmode="numeric" placeholder="PIN 4–6 цифр" />
+        <input id="setup-pin-confirm" type="password" inputmode="numeric" placeholder="Повтори PIN" />
+        <button id="setup-pin-btn">Создать PIN</button>
+      </div>
+
+      <div id="unlock-block" class="hidden">
+        <h3>Введи PIN</h3>
+        <input id="unlock-pin" type="password" inputmode="numeric" placeholder="PIN" />
+        <button id="unlock-btn">Открыть</button>
+        <button id="reset-btn" class="secondary">Сбросить приложение</button>
+      </div>
+
+      <div id="auth-message" class="msg"></div>
+    </div>
+  </div>
+
+  <div id="main-screen" class="wrap hidden">
+    <div class="topbar">
+      <div>
+        <h1>fin</h1>
+        <p class="muted">Офлайн PWA</p>
+      </div>
+      <div class="topbar-actions">
+        <button id="lock-btn" class="secondary">Закрыть</button>
+      </div>
+    </div>
+
+    <section id="screen-home" class="screen active">
+      <div class="accounts-grid">
+        <div class="box">
+          <div class="label">Kaspi</div>
+          <div id="kaspi-balance" class="value">0</div>
+          <button class="blue" data-account-adjust="Kaspi">Изменить баланс</button>
+        </div>
+        <div class="box">
+          <div class="label">Freedom</div>
+          <div id="freedom-balance" class="value">0</div>
+          <button class="blue" data-account-adjust="Freedom">Изменить баланс</button>
+        </div>
+        <div class="box">
+          <div class="label">Crypto (USDT)</div>
+          <div id="crypto-balance" class="value">0</div>
+          <button class="blue" data-account-adjust="Crypto">Изменить баланс</button>
+        </div>
+        <div class="box">
+          <div class="label">Deposit</div>
+          <div id="deposit-balance" class="value">0</div>
+          <button class="blue" data-account-adjust="Deposit">Изменить баланс</button>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="box">
+          <div class="label">Общий баланс</div>
+          <div id="total-balance" class="value">0</div>
+        </div>
+        <div class="box">
+          <div class="label">Все активы</div>
+          <div id="all-assets" class="value">0</div>
+        </div>
+        <div class="box">
+          <div class="label">Расходы за неделю</div>
+          <div id="week-expense" class="value">0</div>
+        </div>
+        <div class="box">
+          <div class="label">Расходы за месяц</div>
+          <div id="month-expense" class="value">0</div>
+        </div>
+      </div>
+
+      <div class="summary">
+        <div class="box">
+          <div class="label">Доходы за месяц</div>
+          <div id="month-income" class="value">0</div>
+        </div>
+        <div class="box">
+          <div class="label">Операций</div>
+          <div id="ops-count" class="value">0</div>
+        </div>
+        <div class="box">
+          <div class="label">Последняя операция</div>
+          <div id="last-operation-label" class="value" style="font-size:18px;">—</div>
+        </div>
+        <div class="box">
+          <div class="label">Последняя сумма</div>
+          <div id="last-operation-amount" class="value" style="font-size:22px;">—</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-operations" class="screen">
+      <div class="card" style="margin-bottom:16px;">
+        <h2>Добавить операцию</h2>
+        <div class="form-grid">
+          <div>
+            <div class="label">Тип</div>
+            <select id="type-input">
+              <option value="expense">Расход</option>
+              <option value="income">Доход</option>
+            </select>
+          </div>
+          <div>
+            <div class="label">Счет</div>
+            <select id="account-input">
+              <option value="Kaspi">Kaspi</option>
+              <option value="Freedom">Freedom</option>
+              <option value="Crypto">Crypto</option>
+              <option value="Deposit">Deposit</option>
+            </select>
+          </div>
+          <div>
+            <div class="label">Категория</div>
+            <select id="category-input">
+              <option value="Еда">Еда</option>
+              <option value="Транспорт">Транспорт</option>
+              <option value="Дом">Дом</option>
+              <option value="Подписки">Подписки</option>
+              <option value="Здоровье">Здоровье</option>
+              <option value="Одежда">Одежда</option>
+              <option value="Развлечения">Развлечения</option>
+              <option value="Инвестиции">Инвестиции</option>
+              <option value="Депозит">Депозит</option>
+              <option value="Другое">Другое</option>
+            </select>
+          </div>
+          <div>
+            <div class="label">Сумма</div>
+            <input id="amount-input" type="number" step="0.01" placeholder="0" />
+          </div>
+          <div>
+            <div class="label">Дата</div>
+            <input id="date-input" type="date" />
+          </div>
+          <div>
+            <div class="label">Комментарий</div>
+            <input id="note-input" type="text" placeholder="Необязательно" />
+          </div>
+        </div>
+        <div class="actions">
+          <button id="add-operation-btn">Добавить</button>
+          <button id="open-transfer-btn" class="yellow">Перевод между счетами</button>
+          <button id="export-btn" class="secondary">Экспорт</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Последние операции</h2>
+        <div id="recent-list" class="history"></div>
+      </div>
+    </section>
+
+    <section id="screen-assets" class="screen">
+      <div class="summary-2">
+        <div class="card">
+          <h2>Все активы</h2>
+          <div class="summary-2" style="margin-bottom:0;">
+            <div class="box">
+              <div class="label">Общий баланс</div>
+              <div id="assets-total-balance" class="value">0</div>
+            </div>
+            <div class="box">
+              <div class="label">Все активы</div>
+              <div id="assets-all-assets" class="value">0</div>
+            </div>
+            <div class="box">
+              <div class="label">Deposit</div>
+              <div id="assets-deposit" class="value">0</div>
+            </div>
+            <div class="box">
+              <div class="label">Crypto</div>
+              <div id="assets-crypto" class="value">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Структура активов</h2>
+          <div id="assets-breakdown" class="history"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="screen-analytics" class="screen">
+      <div class="summary-3">
+        <div class="box">
+          <div class="label">Расходы за неделю</div>
+          <div id="analytics-week-expense" class="value">0</div>
+        </div>
+        <div class="box">
+          <div class="label">Расходы за месяц</div>
+          <div id="analytics-month-expense" class="value">0</div>
+        </div>
+        <div class="box">
+          <div class="label">Доходы за месяц</div>
+          <div id="analytics-month-income" class="value">0</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Структура расходов</h2>
+        <p class="muted">Процентное соотношение трат за текущий месяц</p>
+
+        <div class="chart-wrap">
+          <svg class="donut" viewBox="0 0 220 220">
+            <circle class="donut-bg" cx="110" cy="110" r="70"></circle>
+            <g id="donut-segments"></g>
+            <circle class="donut-hole" cx="110" cy="110" r="48"></circle>
+            <text x="110" y="103" text-anchor="middle" class="center-small">Расходы</text>
+            <text x="110" y="126" text-anchor="middle" id="donut-total" class="center-big">0</text>
+          </svg>
+        </div>
+
+        <div id="chart-legend" class="legend"></div>
+      </div>
+    </section>
+
+    <section id="screen-goals" class="screen">
+      <div class="card">
+        <h2>Финансовая цель</h2>
+        <div class="goal-grid">
+          <div>
+            <div class="label">Название цели</div>
+            <input id="goal-name-input" type="text" placeholder="Например: Квартира, машина, подушка безопасности" />
+          </div>
+          <div>
+            <div class="label">Целевая сумма</div>
+            <input id="goal-target-input" type="number" step="0.01" placeholder="0" />
+          </div>
+        </div>
+        <div class="actions">
+          <button id="save-goal-btn">Сохранить цель</button>
+        </div>
+
+        <div class="summary" style="margin-top:16px; margin-bottom:0;">
+          <div class="box">
+            <div class="label">Цель</div>
+            <div id="goal-name-view" class="value" style="font-size:22px;">—</div>
+          </div>
+          <div class="box">
+            <div class="label">Целевая сумма</div>
+            <div id="goal-target-view" class="value">0</div>
+          </div>
+          <div class="box">
+            <div class="label">Накоплено</div>
+            <div id="goal-current-view" class="value">0</div>
+          </div>
+          <div class="box">
+            <div class="label">Осталось</div>
+            <div id="goal-left-view" class="value">0</div>
+          </div>
+        </div>
+
+        <div class="progress">
+          <div id="goal-progress-bar" class="progress-bar"></div>
+        </div>
+        <p id="goal-progress-text" class="muted" style="margin-top:10px;">Прогресс: 0%</p>
+      </div>
+    </section>
+  </div>
+
+  <div id="operation-modal" class="modal hidden">
+    <div class="modal-card">
+      <h2>Редактирование операции</h2>
+      <div class="form-grid">
+        <div>
+          <div class="label">Тип</div>
+          <select id="edit-type-input">
+            <option value="expense">Расход</option>
+            <option value="income">Доход</option>
+            <option value="adjustment">Корректировка</option>
+          </select>
+        </div>
+        <div>
+          <div class="label">Счет</div>
+          <select id="edit-account-input">
+            <option value="Kaspi">Kaspi</option>
+            <option value="Freedom">Freedom</option>
+            <option value="Crypto">Crypto</option>
+            <option value="Deposit">Deposit</option>
+          </select>
+        </div>
+        <div>
+          <div class="label">Категория</div>
+          <input id="edit-category-input" type="text" placeholder="Категория" />
+        </div>
+        <div>
+          <div class="label">Сумма</div>
+          <input id="edit-amount-input" type="number" step="0.01" placeholder="0" />
+        </div>
+        <div>
+          <div class="label">Дата</div>
+          <input id="edit-date-input" type="date" />
+        </div>
+        <div>
+          <div class="label">Комментарий</div>
+          <input id="edit-note-input" type="text" placeholder="Комментарий" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="save-edit-btn">Сохранить изменения</button>
+        <button id="delete-edit-btn" class="danger">Удалить</button>
+        <button id="close-edit-btn" class="secondary">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="transfer-modal" class="modal hidden">
+    <div class="modal-card">
+      <h2>Перевод между счетами</h2>
+      <div class="form-grid">
+        <div>
+          <div class="label">Со счета</div>
+          <select id="transfer-from-input">
+            <option value="Kaspi">Kaspi</option>
+            <option value="Freedom">Freedom</option>
+            <option value="Crypto">Crypto</option>
+            <option value="Deposit">Deposit</option>
+          </select>
+        </div>
+        <div>
+          <div class="label">На счет</div>
+          <select id="transfer-to-input">
+            <option value="Freedom">Freedom</option>
+            <option value="Kaspi">Kaspi</option>
+            <option value="Crypto">Crypto</option>
+            <option value="Deposit">Deposit</option>
+          </select>
+        </div>
+        <div>
+          <div class="label">Сумма</div>
+          <input id="transfer-amount-input" type="number" step="0.01" placeholder="0" />
+        </div>
+        <div>
+          <div class="label">Дата</div>
+          <input id="transfer-date-input" type="date" />
+        </div>
+        <div style="grid-column:1 / -1;">
+          <div class="label">Комментарий</div>
+          <input id="transfer-note-input" type="text" placeholder="Например: перевод между своими счетами" />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button id="save-transfer-btn">Сделать перевод</button>
+        <button id="close-transfer-btn" class="secondary">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <nav id="bottom-nav" class="bottom-nav hidden">
+    <button class="nav-btn active" data-screen="home">Главная</button>
+    <button class="nav-btn" data-screen="operations">Операции</button>
+    <button class="nav-btn" data-screen="assets">Активы</button>
+    <button class="nav-btn" data-screen="analytics">Аналитика</button>
+    <button class="nav-btn" data-screen="goals">Цели</button>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>
