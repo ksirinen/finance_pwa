@@ -1,13 +1,13 @@
 {
   "name": "fin",
-  "short_name": "fin",
+  "short_name": "Fin",
   "description": "Личное офлайн-приложение для учета финансов",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#081225",
-  "theme_color": "#081225",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "lang": "ru",
   "icons": [
     {

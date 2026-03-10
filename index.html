@@ -728,13 +728,26 @@
 
   <script src="app.js"></script>
 
+
+
 <script>
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(console.error);
+  window.addEventListener("load", async () => {
+    try {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      for (const reg of regs) {
+        const url = reg.active?.scriptURL || reg.installing?.scriptURL || reg.waiting?.scriptURL || "";
+        if (url.includes("service-worker.js")) {
+          await reg.unregister();
+        }
+      }
+      await navigator.serviceWorker.register("./sw.js", { scope: "./" });
+      console.log("sw registered");
+    } catch (e) {
+      console.error("sw register failed", e);
+    }
   });
 }
 </script>
-
 </body>
 </html>
