@@ -1,20 +1,19 @@
-const CACHE_NAME = "fin-cache-v20";
+const CACHE_NAME = "fin-cache-v30";
+
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css",
   "./app.js",
   "./manifest.webmanifest",
-  "./icons/apple-touch-icon-v2.png",
+  "./icons/apple-touch-icon-v3.png",
   "./icons/icon-180.png",
   "./icons/icon-192.png",
   "./icons/icon-512.png"
 ];
 
 self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL))
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)));
   self.skipWaiting();
 });
 
@@ -44,14 +43,11 @@ self.addEventListener("fetch", event => {
         cache.put(event.request, copy);
       }
       return response;
-    } catch (err) {
-      if (
-        event.request.mode === "navigate" ||
-        event.request.destination === "document"
-      ) {
+    } catch (e) {
+      if (event.request.mode === "navigate" || event.request.destination === "document") {
         return caches.match("./index.html", { ignoreSearch: true });
       }
-      throw err;
+      throw e;
     }
   })());
 });
